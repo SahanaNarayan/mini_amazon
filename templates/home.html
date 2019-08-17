@@ -3,8 +3,23 @@
 	<p> Welcome to my Amazon!</p>
 
 	{% if session %}
-	<p>Welcome {{ session['username']}}</p>
+	<p> Welcome {{ session['username']}} </p>
 	<p> You've logged in as {{ session['c_type']}}</p>
+	<p><a href="/products" target="_blank"> Click here</a> to see products</p>
+
+	{% if session['c_type'] == 'seller' %}
+
+	<p> Enter product details here! </p>
+
+	<form action="/products" method="POST">
+		<input type="text" name="name" placeholder="enter productname here ..."><br>
+		<input type="text" name="info" placeholder="enter info about product here ..."><br>
+		<input type="text" name="price" placeholder="enter product price here ..."><br>
+		<input type="submit" value="Add product">
+	</form>
+
+	{% endif %}
+
 	{% else %}
 
 	<p>Have an account? Please login</p>

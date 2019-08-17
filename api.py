@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request,session,redirect,url_for
-from model import check_user,add_user_to_db
+from model import check_user,add_user_to_db,check_product,add_product_to_db,get_products,remove_product
 
 app = Flask(__name__)
 app.secret_key = 'hello'
@@ -41,8 +41,7 @@ def signup():
 
 		add_user_to_db(user_info)
 		session['username'] = user_info['username'] 
-		session['c_type'] = user_info
-		['c_type']
+		session['c_type'] = user_info['c_type']
 		return redirect(url_for('home'))
 
 	return redirect(url_for('home'))
@@ -61,6 +60,35 @@ def login():
 			return redirect(url_for('home'))
 		return "Username or password incorrect.Try again"
 	return redirect(url_for('home'))
+
+@app.route('/products',methods=['GET','POST'])
+def products():
+
+	if request.method == 'POST':
+		product_info = {}
+		product_info['name'] = request.form['name']
+		product_info['info'] = request.form['info']
+		product_info['price'] = int(request.form['price'])
+		product_info['seller'] = session['username']
+
+		if bool(check_product(product_info['name'])) is True:
+			return "Product already exists!"
+
+		add_product_to_db(product_info)
+		return redirect(url_for('home'))
+
+	products = get_products()
+	return render_template('products.html',products=products)
+
+@app.route('/remove',methods=['GET','POST'])
+def remove():
+
+	if request.method == 'POST':
+		name = request.form['name']
+		remove_product(name)
+		return redirect(url_for('products'))
+
+	return redirect(url_for('products'))
 
 @app.route('/logout')
 def logout():
