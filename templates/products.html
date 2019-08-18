@@ -2,6 +2,7 @@
 
 {% block body %}
 
+{% if products.count()!=0 %}
 
 {% for product in products %}
 
@@ -18,7 +19,15 @@
 		<input type="hidden" name="name" value="{{product['name']}}">
 		<input type="submit" value="remove product">
 	</form>
+	{% else %}
+	<form target="_new" action="/cart" method="POST">
+		<input type="hidden" name="name" value="{{product['name']}}">
+		<input type="submit" value="Add to cart">
+	</form>
 	{% endif %}
+
 {% endfor %}
+
+{% endif %}
 
 {% endblock body %}

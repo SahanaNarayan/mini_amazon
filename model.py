@@ -38,3 +38,33 @@ def remove_product(product):
 
 	query = {"name":product}
 	db['products'].remove(query)
+
+def add_to_cart(name):
+
+	query = {"username":session['username']}
+	action = {"$addToSet" : {"cart":{"$each":[name]}}}
+
+	db['users'].update(query,action)
+
+def get_cart():
+
+	query = {"username":session['username']}
+	temp = db['users'].find_one(query)
+	result = temp['cart']
+
+	cart = []
+	total=0
+
+	for product in result:
+		info = db['products'].find_one({"name":product})
+		cart.append(info)
+		total+=info['price']
+
+	return cart,total
+
+def remove_from_cart(name):
+
+	query = {"username":session['username']}
+	action = {"$pull":{"cart":name}}
+
+	db['users'].update(query,action)
